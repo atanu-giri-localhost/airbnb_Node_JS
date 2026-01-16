@@ -1,4 +1,34 @@
 const { ObjectId } = require('mongodb');
+const mongoose = require('mongoose');
+const favourite = require('./favourite');
+
+const homeSchema = mongoose.Schema({
+  houseName: {type: String, required: true},
+  price: {type: String, required: true},
+  location: {type: String, required: true},
+  rating: {type: String, required: true},
+  photoUrl: String,
+  description: String
+});
+
+homeSchema.pre('findOneAndDelete', async function(next) {
+  console.log('Came to pre hook while deleting a home');
+  const homeId = this.getQuery()._id;
+  await favourite.deleteMany({houseId: homeId});
+  next();
+});
+
+module.exports = mongoose.model('Home', homeSchema);
+
+
+
+
+
+
+
+
+/*
+const { ObjectId } = require('mongodb');
 const { getDB } = require('../utils/databaseUtil');
 
 module.exports = class Home {
@@ -35,7 +65,7 @@ module.exports = class Home {
     }  
   }
 
-  static fetchAll() {
+  static find() {
     const db = getDB();
     return db.collection("homes").find().toArray();   
   }
@@ -51,3 +81,4 @@ module.exports = class Home {
     }
 }
 
+*/
