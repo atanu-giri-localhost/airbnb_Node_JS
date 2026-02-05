@@ -1,0 +1,11 @@
+<% if (errors && errors.length > 0) { %>
+        <div id="signup-error" class="top-4 right-4 z-50 max-w-sm w-full bg-red-100 border border-red-400 text-red-900 px-4 py-3 rounded-lg shadow-lg">
+          <button type="button" aria-label="Dismiss" onclick="document.getElementById('signup-error').remove()" class="absolute top-2 right-2 text-red-700 hover:text-red-900 font-bold text-lg">&times;</button>
+          <p class="font-semibold mb-1">Please fix the following errors:</p>
+          <ul class="list-disc list-inside mb-2 space-y-1 text-sm text-red-800">
+            <% errors.forEach(function(error) { %>
+              <li class="text-red-500"><%= error %></li>
+            <% }); %>
+          </ul>
+        </div>
+      <% } %>
