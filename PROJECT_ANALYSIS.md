@@ -21,7 +21,6 @@ The main entry point is `app.js`.
 
 - MongoDB Atlas connection is configured in `app.js`
 - Mongoose is the active database layer
-- A native MongoDB helper exists in `utils/databaseUtil.js`, but it is not used by the current app startup flow
 
 ### Authentication and Validation
 
@@ -39,13 +38,6 @@ The main entry point is `app.js`.
 - Static public assets served from `public/`
 - Uploaded images served from `uploads/`
 
-### Installed but Not Actively Used
-
-- `body-parser` is installed, but the app currently uses `express.urlencoded(...)`
-- `mysql2` is installed, but no MySQL connection is used
-- `utils/databaseUtil.js` contains older native MongoDB logic, while current models use Mongoose
-- `data/homes.json` and `data/favourite.json` appear to be older JSON-file storage data
-
 ## Project Structure
 
 ```text
@@ -60,7 +52,6 @@ The main entry point is `app.js`.
 │   ├── hostController.js
 │   └── storeController.js
 ├── models/
-│   ├── favourite.js
 │   ├── home.js
 │   └── user.js
 ├── routes/
@@ -68,7 +59,6 @@ The main entry point is `app.js`.
 │   ├── hostRouter.js
 │   └── storeRouter.js
 ├── utils/
-│   ├── databaseUtil.js
 │   └── pathUtil.js
 ├── views/
 │   ├── auth/
@@ -76,11 +66,9 @@ The main entry point is `app.js`.
 │   ├── partials/
 │   └── store/
 ├── public/
-│   ├── home.css
 │   └── output.css
 ├── uploads/
-├── rules/
-└── data/
+└── rules/
 ```
 
 ## How The App Starts
@@ -167,8 +155,6 @@ Fields:
 - `photo` string
 - `description` string
 
-There is also a `pre('findOneAndDelete')` hook that tries to delete favourite records related to a deleted home.
-
 ### User
 
 Defined in `models/user.js`.
@@ -182,16 +168,6 @@ Fields:
 - `password` string, required
 - `userType` enum: `guest` or `host`
 - `favourites` array of `Home` ObjectIds
-
-### Favourite
-
-Defined in `models/favourite.js`.
-
-Fields:
-
-- `houseId` ObjectId reference to `Home`, required, unique
-
-The current favourite feature mostly uses the `favourites` array on the `User` model. The separate `Favourite` model exists, but it is not the primary storage path for favourites in the current controllers.
 
 ## Main User Flows
 
@@ -266,13 +242,11 @@ This route checks that the user is logged in before downloading. The repository 
 - `views/store/home-detail.ejs`
 - `views/store/favourite-list.ejs`
 - `views/store/bookings.ejs`
-- `views/store/reserve.ejs`
 
 ### Host Views
 
 - `views/host/edit-home.ejs`
 - `views/host/host-home-list.ejs`
-- `views/host/home-added.ejs`
 
 ### Partials
 
@@ -319,7 +293,7 @@ The generated stylesheet is:
 public/output.css
 ```
 
-Most pages use Tailwind utility classes directly inside EJS templates. `public/home.css` also exists, but the shared head partial loads `/output.css`.
+Most pages use Tailwind utility classes directly inside EJS templates. The shared head partial loads `/output.css`.
 
 ## File Uploads
 
@@ -373,13 +347,10 @@ Note: the current `start` script runs `npm run tailwind` only after `nodemon app
 
 ## Current Implementation Notes
 
-- MongoDB credentials are hard-coded in `app.js` and `utils/databaseUtil.js`. In a real deployment, these should be moved to environment variables.
-- `randomString` in `app.js` builds a string but does not return it, so uploaded filenames currently include `undefined`.
-- `hostController.postEditHome` uses `fs.unlink(...)`, but `fs` is not imported in `controllers/hostController.js`.
-- Some login error renders use `auth/login`, while the actual file is `views/auth/logIn.ejs`. On case-sensitive systems this can cause a view lookup error.
-- Store routes like `/favourites` assume `req.session.user` exists, but only the PDF download route has its own login guard. Visiting favourites while logged out can fail.
+- MongoDB credentials are hard-coded in `app.js`. In a real deployment, these should be moved to environment variables.
+- The active MongoDB database name is `airbnb`.
 - The app has no automated test suite yet. The current `npm test` script exits with an error placeholder.
-- Uploaded files, PDFs, and local data files are not ignored by `.gitignore`; only `node_modules/` is ignored.
+- Uploaded files and PDFs are not ignored by `.gitignore`; only `node_modules/` is ignored.
 
 ## In Short
 

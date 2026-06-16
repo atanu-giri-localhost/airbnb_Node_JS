@@ -8,8 +8,6 @@
           >AirNest</a
         >
       </li>
-      <% if(isLoggedIn) {%>
-      <% if(user && user.userType === "guest") {%>
       <li>
         <a
           href="/homes"
@@ -17,6 +15,8 @@
           >Homes-List</a
         >
       </li>
+      <% if(isLoggedIn) {%>
+      <% if(user && user.userType === "guest") {%>
       <li>
         <a
           href="/favourites"

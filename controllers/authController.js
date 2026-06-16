@@ -81,7 +81,7 @@ exports.postSignup = [
 
   (req, res, next) => {
     console.log(req.body)
-    const { firstName, lastName, email, userName, password, confirmPassword, userType } = req.body;
+    const { firstName, lastName, email, userName, password, userType } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(422).render("auth/signUp", {
@@ -118,7 +118,7 @@ exports.postLogin = async (req, res, next) => {
   console.log(email);
   const user = await User.findOne({email: email});
   if (!user) {
-    return res.status(422).render("auth/login", {
+    return res.status(422).render("auth/logIn", {
       pageTitle: "Login",
       currentPage: "login",
       isLoggedIn: false,
@@ -129,7 +129,7 @@ exports.postLogin = async (req, res, next) => {
   }
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return res.status(422).render("auth/login", {
+    return res.status(422).render("auth/logIn", {
       pageTitle: "Login",
       currentPage: "login",
       isLoggedIn: false,

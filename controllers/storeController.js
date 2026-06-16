@@ -4,7 +4,7 @@ const path = require("path");
 const rootDir = require("../utils/pathUtil");
 
 exports.getIndex = (req, res, next) => {
-  Home.find().then((registeredHomes, fields) => {
+  Home.find().then((registeredHomes) => {
     res.render("store/index", {
       registeredHomes: registeredHomes,
       pageTitle: "AirNest – Full Stack Rental Marketplace",
@@ -15,7 +15,7 @@ exports.getIndex = (req, res, next) => {
 }
 
 exports.getHomes = (req, res, next) => {
-  Home.find().then((registeredHomes, fields) => {
+  Home.find().then((registeredHomes) => {
     res.render("store/home-list", {
       registeredHomes: registeredHomes,
       pageTitle: "Homes List",
@@ -37,6 +37,9 @@ exports.getBookings = (req, res, next) => {
 };
 
 exports.getFavouriteList = async (req, res, next) => {
+  if (!req.isLoggedIn || !req.session.user) {
+    return res.redirect("/login");
+  }
   const userId = req.session.user._id;
   const user = await User.findById(userId).populate('favourites');
   const favouriteHomes = user.favourites;
@@ -59,7 +62,6 @@ Home.findById(homeId)
     res.redirect("/homes");
   }
 else{
-  // const homes = home[0];
   console.log("home found", home);
   res.render("store/home-detail", {
     home: home,
@@ -90,6 +92,9 @@ exports.getHomeRules = [(req, res, next) => {
   }
 ]
 exports.postAddToFavourite = async (req, res, next) => {
+  if (!req.isLoggedIn || !req.session.user) {
+    return res.redirect("/login");
+  }
   const homeId = req.body.id;
   const userId = req.session.user._id;
   const user = await User.findById(userId);
@@ -109,6 +114,9 @@ exports.postAddToFavourite = async (req, res, next) => {
 
 
 exports.postRemoveFromFavourite = async (req, res, next) => {
+  if (!req.isLoggedIn || !req.session.user) {
+    return res.redirect("/login");
+  }
   const homeId = req.params.homeId;
   const userId = req.session.user._id;
   const user = await User.findById(userId);

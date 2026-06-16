@@ -1,3 +1,4 @@
+const fs = require("fs");
 const Home = require("../models/home");
 
 exports.getAddHome = (req, res, next) => {
@@ -19,8 +20,6 @@ exports.getEditHome = (req, res, next) => {
     console.log("home not found for editing");
     return res.redirect("/host/host-home-list")
   }
-  // const homes = home[0];
-  // console.log(homeId, editing, home);
     res.render("host/edit-home", {
     home: home,
     pageTitle: "Edit Home on AirNest",
@@ -33,7 +32,7 @@ exports.getEditHome = (req, res, next) => {
 };
 
 exports.getHostHomes = (req, res, next) => {
-  Home.find().then((registeredHomes, fields) => {
+  Home.find().then((registeredHomes) => {
     res.render("host/host-home-list", {
       registeredHomes: registeredHomes,
       pageTitle: "Host Homes List",
@@ -46,9 +45,9 @@ exports.getHostHomes = (req, res, next) => {
 };
 
 exports.postAddHome = (req, res, next) => {
-  const { houseName, price, location, rating,  description, id } = req.body;
+  const { houseName, price, location, rating, description } = req.body;
   const photo = req.file ? req.file.path : null;
-  const home = new Home({houseName, price, location, rating, photo,description, id});
+  const home = new Home({houseName, price, location, rating, photo, description});
   home.save().then(() => {
     console.log("home added successfuly");
   });
@@ -57,7 +56,7 @@ exports.postAddHome = (req, res, next) => {
 };
 
 exports.postEditHome = (req, res, next) => {
-  const { id, houseName, price, location, rating, photo, description } = req.body;
+  const { id, houseName, price, location, rating, description } = req.body;
   Home.findById(id).then((home) => {
     
     home.houseName = houseName;

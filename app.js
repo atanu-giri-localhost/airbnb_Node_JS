@@ -34,6 +34,7 @@ const randomString = (length) => {
     const randomIndex = Math.floor(Math.random() * characters.length);
     result += characters.charAt(randomIndex);
   }
+  return result;
 }
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -44,7 +45,7 @@ const storage = multer.diskStorage({
   }
 });
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
     cb(null, true);  
   } else {
     cb(null, false);
@@ -72,11 +73,6 @@ app.use((req, res, next) => {
 });
 
 app.use(authRouter);
-app.use((req, res, next) => {
-  console.log(req.session.isLoggedIn);
-  // console.log(req.session.user);
-  next();
-});
 app.use(storeRouter);
 app.use("/host", (req, res, next) => {
   if(req.isLoggedIn) {
@@ -92,7 +88,6 @@ app.use(errorsController.pageNotFound);
 
 const PORT = 3000;
 
-// const DB_PATH = "mongodb+srv://admin:admin@cluster0.1u7jlfu.mongodb.net/airbnb?appName=Cluster0";
 mongoose.connect(DB_PATH).then(() => {
   console.log("Conneccted to Mongo");
   app.listen(PORT, () => {
