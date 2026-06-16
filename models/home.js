@@ -7,7 +7,7 @@ const homeSchema = mongoose.Schema({
   price: {type: String, required: true},
   location: {type: String, required: true},
   rating: {type: String, required: true},
-  photoUrl: String,
+  photo: String,
   description: String
 });
 
@@ -32,12 +32,12 @@ const { ObjectId } = require('mongodb');
 const { getDB } = require('../utils/databaseUtil');
 
 module.exports = class Home {
-  constructor(houseName, price, location, rating, photoUrl, description, _id) {
+  constructor(houseName, price, location, rating, photo, description, _id) {
     this.houseName = houseName;
     this.price = price;
     this.location = location;
     this.rating = rating;
-    this.photoUrl = photoUrl;
+    this.photo = photo;
     this.description = description;
     if(_id){
       this._id = _id;
@@ -51,7 +51,7 @@ module.exports = class Home {
       price: this.price,
       location: this.location,
       rating: this.rating,
-      photoUrl: this.photoUrl,
+      photo: this.photo,
       description: this.description
     };
     if(this._id){

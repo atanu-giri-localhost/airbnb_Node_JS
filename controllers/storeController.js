@@ -1,11 +1,13 @@
 const Home = require("../models/home");
 const User = require("../models/user");
+const path = require("path");
+const rootDir = require("../utils/pathUtil");
 
 exports.getIndex = (req, res, next) => {
   Home.find().then((registeredHomes, fields) => {
     res.render("store/index", {
       registeredHomes: registeredHomes,
-      pageTitle: "airbnb Home",
+      pageTitle: "AirNest – Full Stack Rental Marketplace",
       currentPage: "index",
        isLoggedIn: req.isLoggedIn,
     user: req.session.user,
@@ -68,7 +70,25 @@ else{
   })}
 })}
 
-
+exports.getHomeRules = [(req, res, next) => {
+  if(!req.isLoggedIn) {
+    return res.redirect("/login");
+  }
+  next();
+},
+  (req, res, next) => {
+  const homeId = req.params.homeId;
+  const rulesFilename = `${homeId}-Rules.pdf`;
+  const filePath = path.join(rootDir, 'rules', rulesFilename);
+  res.download(filePath, rulesFilename, (err) => {
+    if (err) {
+      console.log("Error downloading file", err);
+      return res.status(500).send("Error downloading file");
+    }
+  }
+  );
+  }
+]
 exports.postAddToFavourite = async (req, res, next) => {
   const homeId = req.body.id;
   const userId = req.session.user._id;
